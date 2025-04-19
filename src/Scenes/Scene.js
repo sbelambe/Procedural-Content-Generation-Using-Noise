@@ -43,18 +43,18 @@ class sceneName extends Phaser.Scene {
       this.generateMap();
     });
 
-    const terrainLayer = layer_map.createLayer(
-      "terrain-layer",
-      layer_tilesheet,
-      0,
-      0
-    );
-    const decorLayer = layer_map.createLayer(
-      "decor-layer",
-      layer_tilesheet,
-      0,
-      0
-    );
+    // const terrainLayer = layer_map.createLayer(
+    //   "terrain-layer",
+    //   layer_tilesheet,
+    //   0,
+    //   0
+    // );
+    // const decorLayer = layer_map.createLayer(
+    //   "decor-layer",
+    //   layer_tilesheet,
+    //   0,
+    //   0
+    // );
 
     const [dynWidth, dynHeight] = [20, 20];
     this.dyn_map = this.make.tilemap({
@@ -72,23 +72,51 @@ class sceneName extends Phaser.Scene {
     this.dyn_layer = this.dyn_map.createBlankLayer(
       "layer1",
       this.dyn_tileset,
-      900,
-      450
+      40,
+      40
     );
     this.dyn_layer.setScale(0.5);
 
     this.decor_layer = this.dyn_map.createBlankLayer(
       "decor-layer",
       this.dyn_tileset,
-      900,
-      450
+      40,
+      40
     );
+    // Add player sprite at the center of the map
+    this.player = this.add
+      .sprite(
+        40 + this.tileset.tileWidth * 0.5 * 10, // center x
+        40 + this.tileset.tileHeight * 0.5 * 10, // center y
+        "character",
+        168 // Change this to match the exact tile index of your character sprite
+      )
+      .setScale(0.5); // Match tilemap scale
+
+    this.cursors = this.input.keyboard.createCursorKeys();
+    this.speed = 3;
+
     this.decor_layer.setScale(0.5);
 
     this.generateMap();
   }
 
-  update() {}
+  update() {
+    if (!this.player) return;
+
+    if (this.cursors.left.isDown) {
+      this.player.x -= this.speed;
+    }
+    if (this.cursors.right.isDown) {
+      this.player.x += this.speed;
+    }
+    if (this.cursors.up.isDown) {
+      this.player.y -= this.speed;
+    }
+    if (this.cursors.down.isDown) {
+      this.player.y += this.speed;
+    }
+  }
 
   initTerrainTiles() {
     this.SNOW = 86;
@@ -114,7 +142,7 @@ class sceneName extends Phaser.Scene {
       { height: 1.5, tiles: [this.ROCK], transitions: true },
       { height: 0.5, tiles: [this.GRASS], transitions: true },
       { height: -0.5, tiles: [this.SAND], transitions: true },
-      { height: -Infinity, tiles: [this.WATER], edge:null },
+      { height: -Infinity, tiles: [this.WATER], edge: null },
     ];
 
     this.decor = [
